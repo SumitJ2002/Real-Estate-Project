@@ -22,7 +22,7 @@ Requirements: Node.js, Java 17+, and Maven. The default local database is H2, wh
 3. In another terminal, start the web app: `cd frontend; npm install; npm run dev`
 4. Open the Vite URL shown in the terminal (usually `http://localhost:5173`).
 
-The admin link is at the bottom of the website. If `ADMIN_PASSWORD` is missing, admin access stays disabled. H2 data is stored in `backend/data/` and survives restarts. For deployment with MySQL, set `DB_URL`, `DB_DRIVER=com.mysql.cj.jdbc.Driver`, `DB_USER`, and `DB_PASSWORD`, along with `ADMIN_PASSWORD`, `FRONTEND_ORIGIN`, and `VITE_API_URL`. Use different, strong database and admin credentials in production.
+The Admin link is in the website header and footer. If `ADMIN_PASSWORD` is missing, admin access stays disabled. H2 data is stored in `backend/data/` and survives restarts. The Vite dev server proxies `/api` to the local backend. For deployment with MySQL, set `DB_URL`, `DB_DRIVER=com.mysql.cj.jdbc.Driver`, `DB_USER`, and `DB_PASSWORD`, along with `ADMIN_PASSWORD`, `FRONTEND_ORIGIN`, and `VITE_API_URL`. Use different, strong database and admin credentials in production.
 
 ## API overview
 
@@ -37,3 +37,14 @@ The admin link is at the bottom of the website. If `ADMIN_PASSWORD` is missing, 
 ## Before publishing
 
 Replace demo properties and image URLs, confirm contact numbers and office details, use a production database and object storage for property photos, configure HTTPS and allowed frontend origin, and review the in-memory admin session setup for your hosting environment. For multi-user administration, use a persistent session store or identity provider.
+
+## Host a client demo on Render
+
+The root `render.yaml` Blueprint and `Dockerfile` deploy the React site and Spring Boot API together, backed by PostgreSQL. On first startup, the API adds four clearly labeled sample listings if the database is empty.
+
+1. Push this repository to GitHub, including the deployment files.
+2. In Render, create a new Blueprint instance and connect this repository and branch.
+3. Set `ADMIN_PASSWORD` to a strong, unique demo password when prompted, then apply the Blueprint.
+4. Open the web service's `onrender.com` URL. The same URL serves the website and `/api` endpoints.
+
+Render's free web services spin down after 15 minutes without traffic, and the free PostgreSQL database expires after 30 days. A sleeping service can take about a minute to start again. Upgrade the service and database if the demo needs reliable always-on access or must remain available beyond the free database period.
